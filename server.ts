@@ -4,6 +4,7 @@ import express from 'express';
 import compression from 'compression';
 import sirv from 'sirv';
 import { createServer as createViteServer, ViteDevServer } from 'vite';
+import { makeMovieRouter } from './src/api/infrastructure/controllers';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 5173;
@@ -12,6 +13,12 @@ const base = process.env.BASE || '/';
 const templateHtml = isProduction ? await fs.readFile('./dist/client/index.html', 'utf-8') : '';
 
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// API routes
+app.use('/api/movies', makeMovieRouter());
 
 let vite: ViteDevServer | undefined;
 if (!isProduction) {
@@ -26,12 +33,14 @@ if (!isProduction) {
   app.use(base, sirv('./dist/client', { extensions: [] }));
 }
 
-app.use('*all', async (req, res) => {
+app.use(/.*/, async (req, res) => {
   try {
-    const url = req.originalUrl.replace(base, '');
+    let url = req.originalUrl.replace(base, '');
+    if (!url.startsWith('/')) url = '/' + url;
 
     let template;
     let render;
+
     if (!isProduction) {
       template = await fs.readFile('./index.html', 'utf-8');
       template = await vite!.transformIndexHtml(url, template);
@@ -42,13 +51,18 @@ app.use('*all', async (req, res) => {
       render = mod.render;
     }
 
-    const rendered = await render(url);
+    const ssrContext = { req, res };
+    const { html, head = '', initialState } = await render(url, ssrContext);
 
-    const html = template
-      .replace(`<!--app-head-->`, rendered.head ?? '')
-      .replace(`<!--app-html-->`, rendered.html ?? '');
+    const stateScript = initialState
+      ? `<script>window.__INITIAL_STATE__=${JSON.stringify(initialState).replace(/</g, '\\u003c')}</script>`
+      : '';
 
-    res.status(200).set({ 'Content-Type': 'text/html' }).send(html);
+    const finalHtml = template
+      .replace('<!--app-head-->', `${head}${stateScript}`)
+      .replace('<!--app-html-->', html ?? '');
+
+    res.status(200).set({ 'Content-Type': 'text/html' }).send(finalHtml);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     vite?.ssrFixStacktrace(e);
