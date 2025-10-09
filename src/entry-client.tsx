@@ -1,18 +1,13 @@
 import './index.scss';
-import { StrictMode } from 'react';
 import { hydrateRoot } from 'react-dom/client';
-import App from './App';
-import { BrowserRouter } from 'react-router';
+import { createBrowserRouter, RouterProvider } from 'react-router';
+import { makeRoutes } from './router/routes';
+import { getGenres, getMovieById } from './app/features/movies/http/getMoviesByGenre';
 
-const initialState = window.__INITIAL_STATE__ || undefined;
+const depsClient = {
+  listGenres: () => getGenres(),
+  getMovieDetails: (id: string) => getMovieById(id),
+};
 
-hydrateRoot(
-  document.getElementById('root') as HTMLElement,
-  <StrictMode>
-    <BrowserRouter>
-      <App initialState={initialState} />
-    </BrowserRouter>
-  </StrictMode>,
-);
-
-delete window.__INITIAL_STATE__;
+const router = createBrowserRouter(makeRoutes(depsClient));
+hydrateRoot(document.getElementById('root')!, <RouterProvider router={router} />);

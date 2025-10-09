@@ -35,7 +35,7 @@ export function makeMovieRouter() {
   );
 
   router.get(
-    '/movies/:id',
+    '/:id',
     asyncMiddleware(async (req, res) => {
       const id = req.params.id;
       if (!id) throw new DomainException('InvalidArgument', 'Genre ID cant be empty');

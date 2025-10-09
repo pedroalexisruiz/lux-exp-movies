@@ -1,15 +1,11 @@
-import { useLocation } from 'react-router';
+import { useLoaderData, useLocation } from 'react-router';
 import './MovieDetail.scss';
 import { Movie } from '../../../api/domain/model';
 
-type Props = {
-  initialMovie?: Movie | null;
-};
-
-export function MovieDetail({ initialMovie }: Props) {
+export function MovieDetail() {
   const location = useLocation();
   const passedMovie = (location.state as { movie?: Movie } | undefined)?.movie;
-
+  const initialMovie = useLoaderData<Movie>();
   const movie = passedMovie ?? initialMovie;
 
   if (!movie) return <p>Movie not found.</p>;

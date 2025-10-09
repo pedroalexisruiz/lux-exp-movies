@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { InitialState } from '../../domain/InitialState';
 import { Genre, Movie } from '../../../api/domain/model';
 import { getMoviesByGenre } from '../../features/movies/http/getMoviesByGenre';
+import { useLoaderData } from 'react-router';
 
-export const useHome = (initialState?: InitialState) => {
+export const useHome = () => {
+  const genres = useLoaderData<Genre[]>();
   const [moviesByGenre, setMoviesByGenre] = useState<Record<number, Movie[]>>({});
   const [loading, setLoading] = useState(false);
 
@@ -12,8 +13,8 @@ export const useHome = (initialState?: InitialState) => {
 
   useEffect(() => {
     const fetchMovies = async () => {
-      if (!initialState?.genres) return;
-      const topGenres = initialState.genres.slice(0, 3);
+      if (!genres) return;
+      const topGenres = genres.slice(0, 3);
       setLoading(true);
 
       const moviewsByGenres = await Promise.all(
@@ -28,7 +29,7 @@ export const useHome = (initialState?: InitialState) => {
       setLoading(false);
     };
     fetchMovies();
-  }, [initialState]);
+  }, [genres]);
 
-  return { moviesByGenre, loading, getImagePath };
+  return { genres, moviesByGenre, loading, getImagePath };
 };

@@ -1,22 +1,17 @@
 import './Home.scss';
-import { InitialState } from '../../domain/InitialState';
 import { Genre } from '../../../api/domain/model';
 import { Carousel } from '../../shared/ui/Carousel';
 import { MovieCard } from '../../features/movies/components/MovieCard';
 import { Link } from 'react-router';
 import { useHome } from './useHome';
 
-interface HomeProps {
-  initialState?: InitialState;
-}
+function Home() {
+  const { genres, moviesByGenre, loading, getImagePath: img } = useHome();
 
-function Home({ initialState }: HomeProps) {
-  const { moviesByGenre, loading, getImagePath: img } = useHome(initialState);
-
-  if (!initialState || loading) return <p>Loading movies...</p>;
+  if (loading) return <p>Loading movies...</p>;
   return (
     <>
-      {initialState.genres?.slice(0, 3).map((genre: Genre) => {
+      {genres.slice(0, 3).map((genre: Genre) => {
         const movies = moviesByGenre[genre.id] || [];
         return (
           <section key={genre.id} style={{ marginBottom: 40 }}>
