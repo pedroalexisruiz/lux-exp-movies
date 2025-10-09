@@ -1,0 +1,77 @@
+.carousel {
+  --gap: 16px;
+  --peek: 24px;
+  --arrow-size: 30px;
+  --arrow-bg: rgba(255, 255, 255, 0.12);
+  --arrow-bg-hover: rgba(255, 255, 255, 0.18);
+
+  position: relative;
+  width: 100%;
+
+  &__viewport {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__track {
+    display: flex;
+    will-change: transform;
+    transition: transform 420ms ease;
+    gap: var(--gap);
+    padding-block: 8px;
+    height: 100%;
+  }
+
+  &__slide {
+    flex: 0 0 auto;
+    user-select: none;
+    pointer-events: none;
+
+    & > * {
+      pointer-events: auto;
+    }
+  }
+
+  &__nav {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    width: var(--arrow-size);
+    height: var(--arrow-size);
+    border-radius: 999px;
+    border: none;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    background: var(--arrow-bg);
+    color: #fff;
+    z-index: 2;
+    backdrop-filter: blur(6px);
+    transition:
+      background 160ms ease,
+      transform 160ms ease;
+
+    &:hover {
+      background: var(--arrow-bg-hover);
+      transform: scale(1.06);
+    }
+
+    &--prev {
+      left: -18px;
+    }
+    &--next {
+      right: -18px;
+    }
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+
+  &--hidden {
+    display: none;
+  }
+}
