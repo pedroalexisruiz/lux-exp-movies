@@ -6,9 +6,8 @@ import { Link } from 'react-router';
 import { useHome } from './useHome';
 
 function Home() {
-  const { genres, moviesByGenre, loading, getImagePath: img } = useHome();
+  const { genres, moviesByGenre, getImagePath: img } = useHome();
 
-  if (loading) return <p>Loading movies...</p>;
   return (
     <>
       {genres.slice(0, 3).map((genre: Genre) => {

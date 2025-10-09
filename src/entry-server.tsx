@@ -17,6 +17,7 @@ export async function render(
   const repo = new TmdbMovieRepository();
   const deps = {
     listGenres: makeListGenres(repo),
+    listMoviesByGenre: (genreId: number) => repo.getMoviesByGenre(genreId),
     getMovieDetails: (id: string) => makeGetMovieDetails(repo)(id),
   };
   const routes = makeRoutes(deps);
