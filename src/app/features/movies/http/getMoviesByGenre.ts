@@ -7,3 +7,8 @@ export const getMoviesByGenre = async (genreId: number): Promise<Movie[]> => {
   const response: MoviesByGenreResponseDTO = await customFetch(url);
   return response.data;
 };
+
+export const getMovieById = async (id: number): Promise<Movie> => {
+  const res = await customFetch(`/api/movies/${id}`);
+  return res.data as Movie;
+};

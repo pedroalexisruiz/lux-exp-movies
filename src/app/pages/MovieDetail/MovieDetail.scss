@@ -1,0 +1,24 @@
+.movie-detail {
+  &__header {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  &__poster {
+    width: 100%;
+    border-radius: 12px;
+  }
+  &__title {
+    margin: 0 0 8px;
+  }
+  &__overview {
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+}
+@media (max-width: 640px) {
+  .movie-detail__header {
+    grid-template-columns: 1fr;
+  }
+}
