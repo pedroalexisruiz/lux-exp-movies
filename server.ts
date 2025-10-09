@@ -52,6 +52,7 @@ app.use('*all', async (req, res) => {
       .replace(`<!--app-html-->`, rendered.html ?? '')
 
     res.status(200).set({ 'Content-Type': 'text/html' }).send(html)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     vite?.ssrFixStacktrace(e)
     console.log(e.stack)
