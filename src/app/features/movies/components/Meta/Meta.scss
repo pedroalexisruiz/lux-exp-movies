@@ -1,0 +1,30 @@
+.md-meta {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 14px;
+  row-gap: 8px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-weight: 600;
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    &--rating {
+      color: #ffd76a;
+      .md-meta__votes {
+        color: var(--muted);
+        font-weight: 500;
+        margin-left: 4px;
+      }
+    }
+
+    svg {
+      display: inline-block;
+    }
+  }
+}

@@ -9,13 +9,14 @@ import {
 } from 'react-router';
 import { makeGetMovieDetails } from './api/application/GetMovieDetails';
 import { makeRoutes } from './router/routes';
+import { Deps } from './router/loaders';
 
 export async function render(
   url: string,
   { req }: { req: Request; res: Response },
 ): Promise<{ html: string }> {
   const repo = new TmdbMovieRepository();
-  const deps = {
+  const deps: Deps = {
     listGenres: makeListGenres(repo),
     listMoviesByGenre: (genreId: number) => repo.getMoviesByGenre(genreId),
     getMovieDetails: (id: string) => makeGetMovieDetails(repo)(id),

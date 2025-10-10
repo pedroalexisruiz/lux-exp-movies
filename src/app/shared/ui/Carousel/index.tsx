@@ -8,6 +8,15 @@ export interface CarouselProps extends useCarouselParams {
   arrows?: boolean;
 }
 
+const SLIDES_PER_VIEWPORT = [
+  { max: 375, slidesToShow: 1 },
+  { min: 376, max: 479, slidesToShow: 2 },
+  { min: 480, max: 767, slidesToShow: 3 },
+  { min: 768, max: 919, slidesToShow: 5 },
+  { min: 920, max: 1239, slidesToShow: 5 },
+  { min: 1240, slidesToShow: 8 },
+];
+
 export const Carousel = ({
   children,
   slidesToShow = 5,
@@ -18,7 +27,7 @@ export const Carousel = ({
   autoplayMs = 0,
   pauseOnHover = true,
   arrows = true,
-  responsive,
+  responsive = SLIDES_PER_VIEWPORT,
 }: CarouselProps) => {
   const {
     onEnter,

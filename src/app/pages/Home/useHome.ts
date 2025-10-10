@@ -9,14 +9,11 @@ export const useHome = () => {
   const setData = useMoviesStore.getState().setData;
   const moviesByGenre = data?.moviesByGenre || {};
 
-  const getImagePath = (path?: string | null, size: 'w342' | 'w500' | 'w780' = 'w342') =>
-    path ? `https://image.tmdb.org/t/p/${size}${path}` : null;
-
   useEffect(() => {
     if (typeof window !== 'undefined' && data?.genres && data?.moviesByGenre) {
       setData(data.genres, data.moviesByGenre);
     }
   }, [data, setData]);
 
-  return { genres, moviesByGenre, getImagePath };
+  return { genres, moviesByGenre };
 };
