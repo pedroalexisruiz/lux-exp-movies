@@ -19,12 +19,15 @@
       border-color 0.15s ease;
 
     &--primary {
-      background: var(--primary);
       border-color: var(--primary);
       font-weight: 700;
       &:hover {
         background: var(--primary-600);
         transform: translateY(-1px);
+      }
+
+      &__active {
+        background: var(--primary);
       }
     }
 

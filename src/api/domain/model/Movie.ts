@@ -19,7 +19,7 @@ export interface Movie {
   posterPath: string;
   productionCompanies: ProductionCompany[];
   productionCountries: ProductionCountry[];
-  releaseDate: Date;
+  releaseDate: string;
   revenue: number;
   runtime: number;
   spokenLanguages: SpokenLanguage[];

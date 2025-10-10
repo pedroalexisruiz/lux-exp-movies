@@ -6,7 +6,7 @@
 
   &__poster-wrap {
     position: relative;
-    border-radius: 14px;
+    border-radius: 6px;
     overflow: hidden;
     box-shadow:
       0 8px 18px rgba(0, 0, 0, 0.35),
@@ -37,23 +37,38 @@
 
   &__title {
     margin-top: 10px;
-    font:
-      600 14px/1.2 system-ui,
-      -apple-system,
-      Segoe UI,
-      Roboto,
-      sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    list-style: 1.2;
+    font-family: system-ui, sans-serif;
     color: #e9eaed;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
   }
 
+  &__summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   &__subtitle {
-    margin-top: 4px;
-    font:
-      400 12px/1.2 system-ui,
-      sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.2;
+    font-family: system-ui, sans-serif;
     color: #b8bac0;
+  }
+
+  &__rating {
+    color: #ffd76a;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.2;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    gap: 4px;
+    align-items: center;
   }
 }

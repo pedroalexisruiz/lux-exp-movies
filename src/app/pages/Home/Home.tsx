@@ -5,9 +5,13 @@ import { MovieCard } from '../../features/movies/components/MovieCard';
 import { Link } from 'react-router';
 import { useHome } from './useHome';
 import { getImagePath } from '../../utils/imagePath';
+import { parseAverage, parseYearString } from '../../../utils/stringParser';
+import { useScrollToTop } from '../../shared/hooks/useScrollToTop';
 
 function Home() {
   const { genres, moviesByGenre } = useHome();
+
+  useScrollToTop();
 
   return (
     <>
@@ -30,7 +34,8 @@ function Home() {
                   >
                     <MovieCard
                       title={movie.title}
-                      subtitle={movie.tagline}
+                      subtitle={movie.releaseDate ? parseYearString(movie.releaseDate) : ''}
+                      rating={movie.voteAverage != null ? parseAverage(movie.voteAverage) : '—'}
                       image={getImagePath(movie.posterPath, 'w342')}
                     />
                   </Link>

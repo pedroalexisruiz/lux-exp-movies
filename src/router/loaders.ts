@@ -34,5 +34,18 @@ export const homeLoader = async (deps: Deps) => {
 export const movideDetailLoader = async (deps: Deps, id: string) => {
   const movie = await deps.getMovieDetails(id);
   const similarMovies = await deps.listMoviesByGenre(movie.genres[0].id);
-  return { movie, similarMovies };
+  const filteredSimilarMovies = similarMovies.filter((m) => m.id !== movie.id);
+  return { movie, similarMovies: filteredSimilarMovies };
+};
+
+export const wishlistLoader = async () => {
+  if (typeof window === 'undefined') return { items: {} };
+  try {
+    const raw = window.localStorage.getItem('wishlist:v1');
+    const parsed = raw ? JSON.parse(raw) : null;
+    const items = parsed?.state?.items ?? {};
+    return { items };
+  } catch {
+    return { items: {} };
+  }
 };

@@ -1,5 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@500;700&family=Cinzel:wght@600;700&family=Baloo+2:wght@600&family=Fredoka:wght@500;700&family=Oswald:wght@500;700&family=Nunito:wght@400;600&family=Rubik:wght@400;600&family=Merriweather+Sans:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Source+Sans+3:wght@400;600&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --bg: #0f0404;
+  --panel: #17171b;
+  --text: #f2f3f5;
+  --muted: #b9bcc6;
+  --chip: #1d1f25;
+  --primary: #ffffff;
+  --primary-600: #f2f3f5;
+  --radius: 14px;
+  --gap: 24px;
+  --font-heading: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-body);
   line-height: 1.5;
   font-weight: 400;
 
@@ -12,4 +25,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
 }

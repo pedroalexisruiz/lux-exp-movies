@@ -4,6 +4,7 @@ import { Movie } from '../../../../../api/domain/model';
 import { Carousel } from '../../../../shared/ui/Carousel';
 import { MovieCard } from '../MovieCard';
 import { getImagePath } from '../../../../utils/imagePath';
+import { parseYearString } from '../../../../../utils/stringParser';
 
 export function RecommendationSection({ title, movies }: { title: string; movies: Movie[] }) {
   return (
@@ -12,7 +13,11 @@ export function RecommendationSection({ title, movies }: { title: string; movies
       <Carousel gap={16} peek={16} arrows height="auto">
         {movies.map((m) => (
           <Link key={m.id} to={`/movie/${m.id}`} style={{ textDecoration: 'none' }}>
-            <MovieCard title={m.title} image={getImagePath(m.posterPath)} />
+            <MovieCard
+              title={m.title}
+              subtitle={m.releaseDate ? parseYearString(m.releaseDate) : ''}
+              image={getImagePath(m.posterPath)}
+            />
           </Link>
         ))}
       </Carousel>
