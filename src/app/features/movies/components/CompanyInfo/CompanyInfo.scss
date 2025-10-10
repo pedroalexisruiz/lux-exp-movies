@@ -1,0 +1,36 @@
+.md-company-info {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+
+  &__item {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+
+  &__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    object-fit: cover;
+    background: #2a2c33;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  &__texts {
+    min-width: 0;
+    text-align: start;
+  }
+  &__name {
+    font-weight: 700;
+    display: block;
+  }
+  &__role {
+    color: var(--muted);
+    font-size: 13px;
+  }
+}

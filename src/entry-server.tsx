@@ -1,25 +1,36 @@
-import { StrictMode } from 'react';
 import { renderToString } from 'react-dom/server';
-import App from './App';
 import { TmdbMovieRepository } from './api/infrastructure/repository';
 import { makeListGenres } from './api/application';
-import { InitialState } from './app/domain/InitialState';
-import { StaticRouter } from 'react-router';
+import {
+  createStaticHandler,
+  createStaticRouter,
+  StaticHandlerContext,
+  StaticRouterProvider,
+} from 'react-router';
+import { makeGetMovieDetails } from './api/application/GetMovieDetails';
+import { makeRoutes } from './router/routes';
+import { Deps } from './router/loaders';
 
-export async function render(url: string) {
+export async function render(
+  url: string,
+  { req }: { req: Request; res: Response },
+): Promise<{ html: string }> {
   const repo = new TmdbMovieRepository();
-  const listGenres = makeListGenres(repo);
+  const deps: Deps = {
+    listGenres: makeListGenres(repo),
+    listMoviesByGenre: (genreId: number) => repo.getMoviesByGenre(genreId),
+    getMovieDetails: (id: string) => makeGetMovieDetails(repo)(id),
+  };
+  const routes = makeRoutes(deps);
+  const handler = createStaticHandler(routes);
+  const result = await handler.query(new Request(`http://x${url}`, { method: req.method }));
 
-  const initialState: InitialState = {};
-  if (url === '/' || url.startsWith('/home')) {
-    initialState.genres = await listGenres();
+  if (result instanceof Response) {
+    throw result;
   }
-  const html = renderToString(
-    <StrictMode>
-      <StaticRouter location={url}>
-        <App initialState={initialState} />
-      </StaticRouter>
-    </StrictMode>,
-  );
-  return { html, initialState };
+
+  const context: StaticHandlerContext = result;
+  const router = createStaticRouter(routes, context);
+  const html = renderToString(<StaticRouterProvider router={router} context={context} />);
+  return { html };
 }

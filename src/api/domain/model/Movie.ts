@@ -6,7 +6,7 @@ import { SpokenLanguage } from './SpokenLanguage';
 export interface Movie {
   adult: boolean;
   backdropPath: string;
-  belongsToCollection: null;
+  belongsToCollection: Collection | null;
   budget: number;
   genres: Genre[];
   homepage: string;
@@ -29,4 +29,11 @@ export interface Movie {
   video: boolean;
   voteAverage: number;
   voteCount: number;
+}
+
+export interface Collection {
+  id: number;
+  name: string;
+  posterPath: string;
+  backdropPath: string;
 }
