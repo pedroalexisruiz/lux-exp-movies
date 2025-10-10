@@ -1,4 +1,4 @@
-import { Movie } from '../../../api/domain/model';
+import { Movie } from '@domain/model';
 
 export interface MoviesByGenreResponseDTO {
   ok: boolean;

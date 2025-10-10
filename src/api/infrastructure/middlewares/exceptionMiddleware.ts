@@ -1,5 +1,5 @@
 import type { ErrorRequestHandler } from 'express';
-import { DomainException } from '../../domain/exception/DomainException';
+import { DomainException } from '@domain/exception/DomainException';
 
 export function mapStatus(e: DomainException): number {
   switch (e.type) {

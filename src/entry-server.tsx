@@ -1,15 +1,14 @@
 import { renderToString } from 'react-dom/server';
-import { TmdbMovieRepository } from './api/infrastructure/repository';
-import { makeListGenres } from './api/application';
+import { TmdbMovieRepository } from '@infrastructure/repository';
+import { makeListGenres, makeGetMovieDetails } from '@application/index';
 import {
   createStaticHandler,
   createStaticRouter,
   StaticHandlerContext,
   StaticRouterProvider,
 } from 'react-router';
-import { makeGetMovieDetails } from './api/application/GetMovieDetails';
-import { makeRoutes } from './router/routes';
-import { Deps } from './router/loaders';
+import { makeRoutes } from '@router/routes';
+import { Deps } from '@router/loaders';
 
 export async function render(
   url: string,

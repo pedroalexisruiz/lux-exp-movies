@@ -1,4 +1,4 @@
-import { Genre, Movie } from '../../api/domain/model';
+import { Genre, Movie } from '@domain/model';
 
 export interface InitialState {
   genres?: Genre[];

@@ -1,10 +1,10 @@
 import './RecommendationSection.scss';
 import { Link } from 'react-router';
-import { Movie } from '../../../../../api/domain/model';
-import { Carousel } from '../../../../shared/ui/Carousel';
+import { Movie } from '@api/domain/model';
+import { Carousel } from '@shared/ui/Carousel';
 import { MovieCard } from '../MovieCard';
-import { getImagePath } from '../../../../utils/imagePath';
-import { parseYearString } from '../../../../../utils/stringParser';
+import { getImagePath } from '@utils/imagePath';
+import { parseYearString } from '@/utils/stringParser';
 
 export function RecommendationSection({ title, movies }: { title: string; movies: Movie[] }) {
   return (

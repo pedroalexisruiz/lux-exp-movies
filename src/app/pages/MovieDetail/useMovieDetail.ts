@@ -1,8 +1,8 @@
 import { useLoaderData } from 'react-router';
-import { Movie } from '../../../api/domain/model';
-import { useWishlist } from '../../store/whishListStore';
+import { Movie } from '@domain/model';
+import { useWishlist } from '@store/whishListStore';
 import { useEffect, useState } from 'react';
-import { parseAverage, parseYearString } from '../../../utils/stringParser';
+import { parseAverage, parseYearString } from '@/utils/stringParser';
 
 export const useMovieDetail = () => {
   const data = useLoaderData<{ movie: Movie; similarMovies: Movie[] }>();

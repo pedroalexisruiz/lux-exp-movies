@@ -1,4 +1,4 @@
-import { HttpError } from '../exceptions/HttpError';
+import { HttpError } from '@infrastructure/exceptions/HttpError';
 
 export const isHttpError = (e: unknown): e is HttpError => e instanceof HttpError;
 

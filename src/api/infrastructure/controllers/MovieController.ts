@@ -1,10 +1,8 @@
 import { Router } from 'express';
-import { TmdbMovieRepository } from '../repository';
-import { makeGetMoviesByGenre, makeListGenres } from '../../application';
-import { exceptionMiddleware } from '../middlewares/exceptionMiddleware';
-import { asyncMiddleware } from '../middlewares/asyncMiddleware';
-import { DomainException } from '../../domain/exception/DomainException';
-import { makeGetMovieDetails } from '../../application/GetMovieDetails';
+import { TmdbMovieRepository } from '@repo/index';
+import { makeGetMovieDetails, makeGetMoviesByGenre, makeListGenres } from '@application/index';
+import { asyncMiddleware, exceptionMiddleware } from '@infrastructure/middlewares';
+import { DomainException } from '@domain/exception/DomainException';
 
 export function makeMovieRouter() {
   const repo = new TmdbMovieRepository();

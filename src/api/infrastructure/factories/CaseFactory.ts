@@ -1,4 +1,4 @@
-import { toCamelCaseKeys } from '../../../utils/caseParser';
+import { toCamelCaseKeys } from '@/utils/caseParser';
 
 export class CaseFactory {
   static fromApi<TInput, TOutput = TInput>(data: TInput): TOutput {

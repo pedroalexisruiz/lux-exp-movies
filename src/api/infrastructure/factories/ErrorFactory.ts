@@ -4,8 +4,8 @@ import {
   NetworkError,
   RateLimited,
   Unauthorized,
-} from '../../domain/exception/DomainException';
-import { isHttpError } from '../http/customFetch';
+} from '@domain/exception/DomainException';
+import { isHttpError } from '@infrastructure/http/customFetch';
 
 export const ErrorFactory = {
   fromErrorToDomainException(e: unknown, ctx?: { genreId?: number }): never {

@@ -1,4 +1,4 @@
-import { MovieRepository } from '../domain/repository';
+import { MovieRepository } from '@domain/repository';
 
 export const makeListGenres = (repo: MovieRepository) => {
   return async function listGenres() {

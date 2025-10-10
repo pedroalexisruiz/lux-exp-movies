@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router';
-import './AppLayout.scss';
 import { Header } from '../header/Header';
+import './AppLayout.scss';
 
 export const AppLayout = () => (
   <div className="app-layout">
