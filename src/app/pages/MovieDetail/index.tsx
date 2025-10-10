@@ -11,13 +11,34 @@ import { DetailSection } from '../../features/movies/components/DetailSection/De
 import { CompanyInfo } from '../../features/movies/components/CompanyInfo/CompanyInfo';
 import { getImagePath } from '../../utils/imagePath';
 import { useMovieDetail } from './useMovieDetail';
+import { FaHeart } from 'react-icons/fa';
+import { FaRegHeart } from 'react-icons/fa';
+import { useScopedTheme } from '../../shared/theme/useScopedTheme';
+import { useRef } from 'react';
+import { useScrollToTop } from '../../shared/hooks/useScrollToTop';
 
 export function MovieDetail() {
-  const { movie, similarMovies, year, runtime, rating, votes, languagesList, countriesList } =
-    useMovieDetail();
+  const {
+    movie,
+    similarMovies,
+    year,
+    runtime,
+    rating,
+    votes,
+    languagesList,
+    countriesList,
+    isInWishlist,
+    toggleItemOnWishlist,
+  } = useMovieDetail();
+  const rootRef = useRef<HTMLElement>(null);
+  const firstGenreId = movie?.genres?.[0]?.id ?? 0;
+  useScopedTheme(rootRef, firstGenreId);
+
   if (!movie) return <p>Movie not found.</p>;
+  useScrollToTop([movie.id]);
+
   return (
-    <section className="movie-detail">
+    <section ref={rootRef} className="movie-detail">
       <Hero
         backdrop={
           getImagePath(movie.backdropPath, 'w1280') || getImagePath(movie.posterPath, 'w780')
@@ -46,6 +67,10 @@ export function MovieDetail() {
           <Actions
             primaryLabel={movie.homepage ? 'Visit homepage' : undefined}
             onPrimary={() => window.open(movie.homepage!, '_blank')}
+            secondaryLabel="Add to wishlist"
+            onSecondary={toggleItemOnWishlist}
+            secondaryIcon={isInWishlist ? <FaHeart /> : <FaRegHeart />}
+            secondaryActive={isInWishlist}
           />
 
           {!!movie.belongsToCollection && (

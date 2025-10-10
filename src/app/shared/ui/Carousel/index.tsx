@@ -14,7 +14,7 @@ const SLIDES_PER_VIEWPORT = [
   { min: 480, max: 767, slidesToShow: 3 },
   { min: 768, max: 919, slidesToShow: 5 },
   { min: 920, max: 1239, slidesToShow: 5 },
-  { min: 1240, slidesToShow: 8 },
+  { min: 1240, slidesToShow: 6 },
 ];
 
 export const Carousel = ({
@@ -24,7 +24,7 @@ export const Carousel = ({
   peek = 24,
   height = '260px',
   loop = true,
-  autoplayMs = 0,
+  autoplayMs = 3000,
   pauseOnHover = true,
   arrows = true,
   responsive = SLIDES_PER_VIEWPORT,
