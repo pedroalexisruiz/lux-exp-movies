@@ -1,9 +1,8 @@
-import { TMDB_BASE, TMDB_KEY } from '../../constants';
-import { MovieRepository } from '../../domain/repository';
-import { GenreResponseDTO, MovieDTO, MoviesByGenreResponseDTO } from '../dto';
-import { MovieFactory } from '../factories';
-import { ErrorFactory } from '../factories/ErrorFactory';
-import { fetchJson } from '../http/customFetch';
+import { TMDB_BASE, TMDB_KEY } from '@api/constants';
+import { MovieRepository } from '@domain/repository';
+import { GenreResponseDTO, MovieDTO, MoviesByGenreResponseDTO } from '@dto/index';
+import { ErrorFactory, MovieFactory } from '@infrastructure/factories';
+import { fetchJson } from '@infrastructure/http/customFetch';
 
 async function tmdbAPI<T>(path: string, init?: RequestInit): Promise<T> {
   if (!TMDB_KEY) throw new Error('TMDB_KEY is not defined');

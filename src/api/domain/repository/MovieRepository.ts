@@ -1,4 +1,4 @@
-import { Genre, Movie } from '../model';
+import { Genre, Movie } from '@domain/model';
 
 export interface MovieRepository {
   getMovieDetails(movideId: string): Promise<Movie>;

@@ -1,6 +1,6 @@
 import { create, StateCreator } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { Genre, Movie } from '../../api/domain/model';
+import { Genre, Movie } from '@domain/model';
 
 type MoviesState = {
   genres: Genre[] | null;

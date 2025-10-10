@@ -1,13 +1,9 @@
 import './index.scss';
 import { hydrateRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import { makeRoutes } from './router/routes';
-import {
-  getGenres,
-  getMovieById,
-  getMoviesByGenre,
-} from './app/features/movies/http/getMoviesByGenre';
-import { Deps } from './router/loaders';
+import { makeRoutes } from '@router/routes';
+import { getGenres, getMovieById, getMoviesByGenre } from '@features/movies/http/getMoviesByGenre';
+import { Deps } from '@router/loaders';
 
 const depsClient: Deps = {
   listGenres: () => getGenres(),

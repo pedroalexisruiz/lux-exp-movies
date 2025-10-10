@@ -19,8 +19,29 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@api/*": ["src/api/*"],
+
+      "@application/*": ["src/api/application/*"],
+      "@domain/*": ["src/api/domain/*"],
+      "@infrastructure/*": ["src/api/infrastructure/*"],
+      "@controllers/*": ["src/api/infrastructure/controllers/*"],
+      "@dto/*": ["src/api/infrastructure/dto/*"],
+      "@repo/*": ["src/api/infrastructure/repository/*"],
+
+      "@app/*": ["src/app/*"],
+      "@router/*": ["src/router/*"],
+      "@assets/*": ["src/assets/*"],
+      "@store/*": ["src/app/store/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@features/*": ["src/app/features/*"],
+      "@utils/*": ["src/app/utils/*"]
+    }
   },
-  "include": ["src", "vite.config.ts", "vite-env.d.ts", "types"],
+  "include": ["src", "vite.config.ts", "vite-env.d.ts", "types", "test"],
   "exclude": ["server.ts"]
 }

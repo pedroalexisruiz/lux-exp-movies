@@ -1,6 +1,6 @@
-import { Genre, Movie } from '../../../../api/domain/model';
-import { MoviesByGenreResponseDTO } from '../../../shared/dto/MoviesByGenreResponseDTO';
-import { customFetch } from '../../../shared/http/clientCustomFetch';
+import { Genre, Movie } from '@domain/model';
+import { MoviesByGenreResponseDTO } from '@shared/dto/MoviesByGenreResponseDTO';
+import { customFetch } from '@shared/http/clientCustomFetch';
 
 export const getGenres = async (): Promise<Genre[]> => {
   const url = `/api/movies/genres`;

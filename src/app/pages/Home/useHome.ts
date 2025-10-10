@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { Genre, Movie } from '../../../api/domain/model';
+import { Genre, Movie } from '@domain/model';
 import { useLoaderData } from 'react-router';
-import { useMoviesStore } from '../../store/moviesStore';
+import { useMoviesStore } from '@store/moviesStore';
 
 export const useHome = () => {
   const data = useLoaderData<{ genres: Genre[]; moviesByGenre: Record<number, Movie[]> }>();

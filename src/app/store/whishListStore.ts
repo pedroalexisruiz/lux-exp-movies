@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, devtools } from 'zustand/middleware';
-import { Movie } from '../../api/domain/model';
+import { Movie } from '@domain/model';
 
 type WishlistState = {
   items: Record<number, Movie>;

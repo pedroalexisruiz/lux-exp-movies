@@ -1,12 +1,12 @@
 import './Home.scss';
-import { Genre } from '../../../api/domain/model';
-import { Carousel } from '../../shared/ui/Carousel';
-import { MovieCard } from '../../features/movies/components/MovieCard';
+import { Genre } from '@domain/model';
+import { Carousel } from '@shared/ui/Carousel';
+import { MovieCard } from '@features/movies/components/MovieCard';
 import { Link } from 'react-router';
 import { useHome } from './useHome';
-import { getImagePath } from '../../utils/imagePath';
-import { parseAverage, parseYearString } from '../../../utils/stringParser';
-import { useScrollToTop } from '../../shared/hooks/useScrollToTop';
+import { getImagePath } from '@utils/imagePath';
+import { parseAverage, parseYearString } from '@/utils/stringParser';
+import { useScrollToTop } from '@shared/hooks/useScrollToTop';
 
 function Home() {
   const { genres, moviesByGenre } = useHome();

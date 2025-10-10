@@ -1,11 +1,11 @@
+import { MovieCard } from '@features/movies/components/MovieCard';
+import { useScrollToTop } from '@shared/hooks/useScrollToTop';
+import { Carousel } from '@shared/ui/Carousel';
+import { useWishlist } from '@store/whishListStore';
+import { getImagePath } from '@utils/imagePath';
+import { useMemo } from 'react';
 import { Link } from 'react-router';
 import './WishList.scss';
-import { useWishlist } from '../../store/whishListStore';
-import { MovieCard } from '../../features/movies/components/MovieCard';
-import { getImagePath } from '../../utils/imagePath';
-import { Carousel } from '../../shared/ui/Carousel';
-import { useMemo } from 'react';
-import { useScrollToTop } from '../../shared/hooks/useScrollToTop';
 
 export function Wishlist() {
   const itemsObj = useWishlist((s) => s.items);

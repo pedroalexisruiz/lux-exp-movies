@@ -1,21 +1,20 @@
-import './MovieDetail.scss';
-
-import placeholderPoster from '../../../assets/cinema-placeholder.jpg';
-import { Hero } from '../../features/movies/components/Hero/Hero';
-import { Meta } from '../../features/movies/components/Meta/Meta';
-import { ChipList } from '../../features/movies/components/ChipList/ChipList';
-import { CollectionCard } from '../../features/movies/components/CollectionCard/CollectionCard';
-import { Actions } from '../../features/movies/components/Actions/Actions';
-import { RecommendationSection } from '../../features/movies/components/RecommendationSection/RecommendationSection';
-import { DetailSection } from '../../features/movies/components/DetailSection/DetailSection';
-import { CompanyInfo } from '../../features/movies/components/CompanyInfo/CompanyInfo';
-import { getImagePath } from '../../utils/imagePath';
-import { useMovieDetail } from './useMovieDetail';
-import { FaHeart } from 'react-icons/fa';
-import { FaRegHeart } from 'react-icons/fa';
-import { useScopedTheme } from '../../shared/theme/useScopedTheme';
+import placeholderPoster from '@assets/cinema-placeholder.jpg';
+import { Actions } from '@features/movies/components/Actions/Actions';
+import { ChipList } from '@features/movies/components/ChipList/ChipList';
+import { CollectionCard } from '@features/movies/components/CollectionCard/CollectionCard';
+import { CompanyInfo } from '@features/movies/components/CompanyInfo/CompanyInfo';
+import { DetailSection } from '@features/movies/components/DetailSection/DetailSection';
+import { Hero } from '@features/movies/components/Hero/Hero';
+import { Meta } from '@features/movies/components/Meta/Meta';
+import { RecommendationSection } from '@features/movies/components/RecommendationSection/RecommendationSection';
+import { useScrollToTop } from '@shared/hooks/useScrollToTop';
+import { useScopedTheme } from '@shared/theme/useScopedTheme';
+import { getImagePath } from '@utils/imagePath';
 import { useRef } from 'react';
-import { useScrollToTop } from '../../shared/hooks/useScrollToTop';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import { useMovieDetail } from './useMovieDetail';
+
+import './MovieDetail.scss';
 
 export function MovieDetail() {
   const {
