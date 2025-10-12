@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2022",
     "useDefineForClassFields": true,
+    "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
