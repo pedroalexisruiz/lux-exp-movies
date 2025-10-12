@@ -22,7 +22,7 @@ const critter = isProduction
       inlineThreshold: 0,
       keyframes: 'critical',
       compress: true,
-      logLevel: 'info',
+      logLevel: 'silent',
     })
   : null;
 
@@ -113,5 +113,5 @@ app.use(/.*/, async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server started at http://localhost:${port}`);
+  console.log(`Server started at port ${port}`);
 });

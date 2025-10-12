@@ -3,6 +3,7 @@ import { TmdbMovieRepository } from '@repo/index';
 import { makeGetMovieDetails, makeGetMoviesByGenre, makeListGenres } from '@application/index';
 import { asyncMiddleware, exceptionMiddleware } from '@infrastructure/middlewares';
 import { DomainException } from '@domain/exception/DomainException';
+import { cacheControl } from '../middlewares/cacheMiddleware';
 
 export function makeMovieRouter() {
   const repo = new TmdbMovieRepository();
@@ -11,6 +12,9 @@ export function makeMovieRouter() {
   const getMovieDetail = makeGetMovieDetails(repo);
 
   const router = Router();
+
+  router.use(cacheControl({ privacy: 'public', maxAge: 60, staleWhileRevalidate: 300 }));
+  router.use(exceptionMiddleware);
 
   router.get(
     '/genres',
@@ -36,13 +40,12 @@ export function makeMovieRouter() {
     '/:id',
     asyncMiddleware(async (req, res) => {
       const id = req.params.id;
-      if (!id) throw new DomainException('InvalidArgument', 'Genre ID cant be empty');
+      if (!id) throw new DomainException('InvalidArgument', 'Movie ID cant be empty');
 
       const data = await getMovieDetail(id);
       res.json({ ok: true, data });
     }),
   );
 
-  router.use(exceptionMiddleware);
   return router;
 }

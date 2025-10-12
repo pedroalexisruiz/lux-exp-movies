@@ -1,0 +1,29 @@
+services:
+  redis:
+    image: redis:7-alpine
+    env_file:
+      - .env.production
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build: .
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env.production
+    ports:
+      - "${PORT:-5173}:${PORT:-5173}"
+    volumes:
+      - ./.cache:/app/.cache
+    restart: unless-stopped
+
+volumes:
+  redis-data:
