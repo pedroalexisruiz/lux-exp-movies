@@ -2,7 +2,7 @@ import { type RouteObject } from 'react-router';
 import Home from '../app/pages/Home/Home';
 import { MovieDetail } from '../app/pages/MovieDetail';
 import { useMoviesStore } from '../app/store/moviesStore';
-import { Deps, homeLoader, movideDetailLoader, wishlistLoader } from './loaders';
+import { Deps, homeLoader, movieDetailLoader, wishlistLoader } from './loaders';
 import { Wishlist } from '../app/pages/WishList/WishList';
 import { AppLayout } from '../app/layout/AppLayout/AppLayout';
 
@@ -24,7 +24,7 @@ export const makeRoutes = (deps: Deps): RouteObject[] => [
       {
         path: '/movie/:id',
         element: <MovieDetail />,
-        loader: async ({ params }) => movideDetailLoader(deps, params.id!),
+        loader: async ({ params }) => movieDetailLoader(deps, params.id!),
       },
       {
         path: '/wishlist',

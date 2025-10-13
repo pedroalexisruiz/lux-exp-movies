@@ -8,7 +8,7 @@ import { parseYearString } from '@/utils/stringParser';
 
 export function RecommendationSection({ title, movies }: { title: string; movies: Movie[] }) {
   return (
-    <section className="md-recos">
+    <section className="md-recos" data-testid="recommendation-section">
       <h2 className="md-recos__title">{title}</h2>
       <Carousel gap={16} peek={16} arrows height="auto">
         {movies.map((m) => (

@@ -1,5 +1,5 @@
-import { Genre, Movie } from '../api/domain/model';
-import { useMoviesStore } from '../app/store/moviesStore';
+import { Genre, Movie } from '@domain/model';
+import { useMoviesStore } from '@store/moviesStore';
 
 export type Deps = {
   listGenres: () => Promise<Genre[]>;
@@ -31,7 +31,7 @@ export const homeLoader = async (deps: Deps) => {
   return { genres, moviesByGenre: map };
 };
 
-export const movideDetailLoader = async (deps: Deps, id: string) => {
+export const movieDetailLoader = async (deps: Deps, id: string) => {
   const movie = await deps.getMovieDetails(id);
   const similarMovies = await deps.listMoviesByGenre(movie.genres[0].id);
   const filteredSimilarMovies = similarMovies.filter((m) => m.id !== movie.id);
