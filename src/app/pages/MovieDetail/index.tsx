@@ -61,7 +61,7 @@ export function MovieDetail() {
       <div className="movie-detail__body">
         <div className="movie-detail__col-left">
           <h2 className="movie-detail__section-title">Summary</h2>
-          <p className="movie-detail__synopsis">{movie.overview || 'Sin sinopsis disponible.'}</p>
+          <p className="movie-detail__synopsis">{movie.overview || 'No synopsis available.'}</p>
 
           <Actions
             primaryLabel={movie.homepage ? 'Visit homepage' : undefined}

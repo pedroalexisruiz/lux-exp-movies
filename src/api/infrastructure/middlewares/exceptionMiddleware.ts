@@ -13,6 +13,8 @@ export function mapStatus(e: DomainException): number {
       return 503;
     case 'Network':
       return 502;
+    case 'InvalidArgument':
+      return 400;
     default:
       return 500;
   }

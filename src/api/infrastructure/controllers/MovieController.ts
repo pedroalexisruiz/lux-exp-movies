@@ -14,7 +14,6 @@ export function makeMovieRouter() {
   const router = Router();
 
   router.use(cacheControl({ privacy: 'public', maxAge: 60, staleWhileRevalidate: 300 }));
-  router.use(exceptionMiddleware);
 
   router.get(
     '/genres',
@@ -46,6 +45,8 @@ export function makeMovieRouter() {
       res.json({ ok: true, data });
     }),
   );
+
+  router.use(exceptionMiddleware);
 
   return router;
 }

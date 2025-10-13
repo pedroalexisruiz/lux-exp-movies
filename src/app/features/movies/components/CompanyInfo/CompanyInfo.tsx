@@ -10,7 +10,7 @@ export function CompanyInfo({
   role?: string;
 }) {
   return (
-    <li className="md-company-info__item">
+    <li className="md-company-info__item" data-testid="company-info">
       <img className="md-company-info__avatar" src={avatar} alt="" aria-hidden />
       <div className="md-company-info__texts">
         <span className="md-company-info__name">{name}</span>

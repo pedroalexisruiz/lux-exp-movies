@@ -15,6 +15,7 @@ export const MovieCard = ({ title, subtitle, image, rating, onClick }: MovieCard
     <div className="movie-card" onClick={onClick} role="button">
       <div className="movie-card__poster-wrap">
         <img
+          data-testid={`movie-card-image-${title}`}
           className="movie-card__poster"
           src={image ?? placeholderPoster}
           alt={title}

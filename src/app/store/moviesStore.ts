@@ -14,12 +14,14 @@ type WithDevtools = [['zustand/devtools', never]];
 
 const isDevtoolsEnabled = !import.meta.env.SSR && import.meta.env.DEV;
 
+const MAX_AGE_MS = 5 * 60 * 1000;
+
 const creator: StateCreator<MoviesState, WithDevtools> = (set, get) => ({
   genres: null,
   moviesByGenre: {},
   ts: null,
   setData: (genres, moviesByGenre) => set({ genres, moviesByGenre, ts: Date.now() }),
-  hasFreshData: (maxAgeMs = 5 * 60 * 1000) => {
+  hasFreshData: (maxAgeMs = MAX_AGE_MS) => {
     const { ts, genres } = get();
     if (!genres || !ts) return false;
     return Date.now() - ts < maxAgeMs;
