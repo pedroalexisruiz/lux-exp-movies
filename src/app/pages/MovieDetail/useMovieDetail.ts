@@ -3,9 +3,10 @@ import { Movie } from '@domain/model';
 import { useWishlist } from '@store/whishListStore';
 import { useEffect, useState } from 'react';
 import { parseAverage, parseYearString } from '@/utils/stringParser';
+import { Paginated } from '@/api/domain/model/Pagination';
 
 export const useMovieDetail = () => {
-  const data = useLoaderData<{ movie: Movie | null; similarMovies: Movie[] }>();
+  const data = useLoaderData<{ movie: Movie | null; similarMovies: Paginated<Movie> }>();
   const { movie, similarMovies } = data;
 
   const [hydrated, setHydrated] = useState(false);

@@ -29,12 +29,20 @@ export class TmdbMovieRepository implements MovieRepository {
       throw ErrorFactory.fromErrorToDomainException(error);
     }
   }
-  async getMoviesByGenre(genreId: number) {
+  async getMoviesByGenre(genreId: number, page: number = 1) {
     try {
       const response = await tmdbAPI<MoviesByGenreResponseDTO>(
-        `/discover/movie?with_genres=${genreId}&sort_by=popularity.desc`,
+        `/discover/movie?with_genres=${genreId}&sort_by=popularity.desc&page=${page}`,
       );
-      return response.results.map(MovieFactory.fromDTO);
+
+      const items = response.results.map(MovieFactory.fromDTO);
+      return {
+        items,
+        page: response.page ?? page,
+        totalPages: response.total_pages ?? 1,
+        total: response.total_results ?? items.length,
+        perPage: items.length,
+      };
     } catch (error) {
       throw ErrorFactory.fromErrorToDomainException(error);
     }

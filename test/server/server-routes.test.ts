@@ -16,7 +16,7 @@ describe('Movie controller', () => {
     app = createApp();
   });
 
-  it('GET /api/movies/genres -> 200 and returns TMDB genres (mocked)', async () => {
+  it('GET /api/movies/genres -> 200 and returns genres', async () => {
     const res = await request(app).get('/api/movies/genres');
 
     expect(res.status).toBe(200);
@@ -33,18 +33,32 @@ describe('Movie controller', () => {
     });
   });
 
-  it('GET /api/movies/genres/:id -> 200 and returns movies by genre', async () => {
+  it('GET /api/movies/genres/:id -> 200 and returns paginated movies by genre (page=1 by default)', async () => {
     const res = await request(app).get('/api/movies/genres/28');
 
     expect(res.status).toBe(200);
     expect(res.body.ok).toBe(true);
-    expect(res.body.data.results || res.body.data).toEqual(
-      expect.arrayContaining
-        ? expect.arrayContaining([
-            expect.objectContaining({ id: 500, title: 'Action One' }),
-            expect.objectContaining({ id: 501, title: 'Action Two' }),
-          ])
-        : expect.anything(),
+    expect(res.body.data.page).toBe(1);
+    expect(res.body.data.totalPages).toBe(1);
+    expect(res.body.data.items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 500, title: 'Action One' }),
+        expect.objectContaining({ id: 501, title: 'Action Two' }),
+      ]),
+    );
+  });
+
+  it('GET /api/movies/genres/:id?page=2 -> 200 and returns requested page from MSW', async () => {
+    const res = await request(app).get('/api/movies/genres/28?page=2');
+
+    expect(res.status).toBe(200);
+    expect(res.body.ok).toBe(true);
+    expect(res.body.data.page).toBe(2);
+    expect(res.body.data.items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 500, title: 'Action One' }),
+        expect.objectContaining({ id: 501, title: 'Action Two' }),
+      ]),
     );
   });
 
@@ -63,11 +77,10 @@ describe('Movie controller', () => {
     );
   });
 
-  it('GET /api/movies/genres/:id -> 400 when :id is not number', async () => {
+  it('GET /api/movies/genres/:id -> 400 when :id is not a number', async () => {
     const res = await request(app).get('/api/movies/genres/abc');
 
-    expect(res.status).toEqual(400);
-
+    expect(res.status).toBe(400);
     expect(res.body).toEqual(
       expect.objectContaining({
         ok: false,
@@ -77,7 +90,33 @@ describe('Movie controller', () => {
     );
   });
 
-  it('send cache headers on all routes', async () => {
+  it('GET /api/movies/genres/:id?page=0 -> 400 when page is not positive', async () => {
+    const res = await request(app).get('/api/movies/genres/28?page=0');
+
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual(
+      expect.objectContaining({
+        ok: false,
+        code: expect.stringMatching(/InvalidArgument/i),
+        message: expect.any(String),
+      }),
+    );
+  });
+
+  it('GET /api/movies/genres/:id?page=xyz -> 400 when page is NaN', async () => {
+    const res = await request(app).get('/api/movies/genres/28?page=xyz');
+
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual(
+      expect.objectContaining({
+        ok: false,
+        code: expect.stringMatching(/InvalidArgument/i),
+        message: expect.any(String),
+      }),
+    );
+  });
+
+  it('sends cache headers on all routes', async () => {
     const [r1, r2, r3] = await Promise.all([
       request(app).get('/api/movies/genres'),
       request(app).get('/api/movies/genres/28'),

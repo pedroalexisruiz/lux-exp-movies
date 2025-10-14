@@ -7,7 +7,7 @@ import { Deps } from '@router/loaders';
 
 const depsClient: Deps = {
   listGenres: () => getGenres(),
-  listMoviesByGenre: (genreId: number) => getMoviesByGenre(genreId),
+  listMoviesByGenre: (genreId: number, page: number = 1) => getMoviesByGenre(genreId, page),
   getMovieDetails: (id: string) => getMovieById(id),
 };
 

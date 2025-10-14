@@ -116,8 +116,8 @@ export function MovieDetail() {
         </>
       )}
 
-      {!!similarMovies.length && (
-        <RecommendationSection title="You might also like" movies={similarMovies} />
+      {!!similarMovies.items.length && (
+        <RecommendationSection title="You might also like" movies={similarMovies.items} />
       )}
     </section>
   );

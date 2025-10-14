@@ -29,6 +29,8 @@ export const Carousel = ({
   pauseOnHover = true,
   arrows = true,
   responsive = SLIDES_PER_VIEWPORT,
+  onEnd,
+  endThreshold,
 }: CarouselProps) => {
   const {
     onEnter,
@@ -49,6 +51,8 @@ export const Carousel = ({
     autoplayMs,
     pauseOnHover,
     responsive,
+    onEnd,
+    endThreshold,
   });
 
   const slideWidthPx = show > 0 ? (viewportW - (show - 1) * gap) / show : 0;

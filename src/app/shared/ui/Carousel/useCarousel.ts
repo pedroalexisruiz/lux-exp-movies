@@ -7,6 +7,8 @@ export interface useCarouselParams {
   autoplayMs?: number;
   pauseOnHover?: boolean;
   responsive?: Array<{ min?: number; max?: number; slidesToShow: number }>;
+  endThreshold?: number;
+  onEnd?: () => void;
 }
 
 export const useCarousel = ({
@@ -16,6 +18,8 @@ export const useCarousel = ({
   autoplayMs = 0,
   pauseOnHover = true,
   responsive,
+  onEnd,
+  endThreshold = 0,
 }: useCarouselParams) => {
   const slides = useMemo(() => Array.from(children), [children]);
   const count = slides.length;
@@ -28,6 +32,7 @@ export const useCarousel = ({
   const timer = useRef<number | null>(null);
   const hovering = useRef(false);
 
+  const endFiredRef = useRef(false);
   const show = computedShow;
   const maxIndex = Math.max(0, count - show);
 
@@ -82,6 +87,19 @@ export const useCarousel = ({
     };
   }, [autoplayMs, count, show, index]);
 
+  useEffect(() => {
+    if (!count || show <= 0) return;
+    const nearEndIndex = Math.max(0, maxIndex - endThreshold);
+    if (index >= nearEndIndex) {
+      if (!endFiredRef.current) {
+        onEnd?.();
+        endFiredRef.current = true;
+      }
+    } else {
+      endFiredRef.current = false;
+    }
+  }, [index, count, show, maxIndex, endThreshold, onEnd]);
+
   return {
     count,
     show,
@@ -90,7 +108,6 @@ export const useCarousel = ({
     trackRef,
     index,
     viewportW,
-    loop,
     handlePrevious,
     handleNext,
     onEnter,
