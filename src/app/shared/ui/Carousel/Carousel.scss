@@ -12,6 +12,13 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
+
+    touch-action: pan-y;
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
   }
 
   &__track {
@@ -21,6 +28,10 @@
     gap: var(--gap);
     padding-block: 8px;
     height: 100%;
+  }
+
+  &--dragging .carousel__track {
+    transition: none;
   }
 
   &__slide {
