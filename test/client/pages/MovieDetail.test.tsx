@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { MovieDetail } from '@app/pages/MovieDetail';
-import { renderWithRouter } from 'test/utils/renderWithRouter';
+import { makePage, renderWithRouter } from 'test/utils/renderWithRouter';
 import { useWishlist } from '@store/whishListStore';
 import { Movie } from '@/api/domain/model';
 
@@ -111,19 +111,18 @@ beforeEach(() => {
   localStorage.clear();
   useWishlist.setState({ items: {} });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  vi.spyOn(window, 'open').mockImplementation(() => window as any);
+   
+  vi.spyOn(window, 'open').mockImplementation(() => window);
 });
 
 describe('<MovieDetail /> coverage (real Zustand store)', () => {
   it('renders "Movie not found." when there is no movie in loader', async () => {
-    renderDetailWithLoader({ movie: null, similarMovies: [] });
-
+    renderDetailWithLoader({ movie: null, similarMovies: makePage([]) });
     await waitFor(() => expect(screen.getByText(TEXT.notFound)).toBeInTheDocument());
   });
 
   it('renders full detail and adds to wishlist', async () => {
-    const similar = [{ id: 99, title: TEXT.recAnother }];
+    const similar = makePage([{ id: 99, title: TEXT.recAnother } as Movie]);
     renderDetailWithLoader({ movie: baseMovie, similarMovies: similar });
 
     await waitFor(() => {
@@ -190,7 +189,7 @@ describe('<MovieDetail /> coverage (real Zustand store)', () => {
 
     renderDetailWithLoader({
       movie: movieNoBackdropNoPoster,
-      similarMovies: [],
+      similarMovies: makePage([]),
     });
 
     await waitFor(() => {

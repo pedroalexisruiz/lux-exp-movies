@@ -1,3 +1,4 @@
+import { Paginated } from '@/api/domain/model/Pagination';
 import { Genre, Movie } from '@domain/model';
 import { MoviesByGenreResponseDTO } from '@shared/dto/MoviesByGenreResponseDTO';
 import { customFetch } from '@shared/http/clientCustomFetch';
@@ -8,8 +9,11 @@ export const getGenres = async (): Promise<Genre[]> => {
   return response.data;
 };
 
-export const getMoviesByGenre = async (genreId: number): Promise<Movie[]> => {
-  const url = `/api/movies/genres/${genreId}`;
+export const getMoviesByGenre = async (
+  genreId: number,
+  page: number = 1,
+): Promise<Paginated<Movie>> => {
+  const url = `/api/movies/genres/${genreId}?page=${page}`;
   const response: MoviesByGenreResponseDTO = await customFetch(url);
   return response.data;
 };

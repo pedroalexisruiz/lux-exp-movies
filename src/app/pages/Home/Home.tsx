@@ -9,14 +9,15 @@ import { parseAverage, parseYearString } from '@/utils/stringParser';
 import { useScrollToTop } from '@shared/hooks/useScrollToTop';
 
 function Home() {
-  const { genres, moviesByGenre } = useHome();
+  const { genres, moviesByGenre, loadMoreByGenre } = useHome();
 
   useScrollToTop();
 
   return (
     <>
       {genres.slice(0, 3).map((genre: Genre) => {
-        const movies = moviesByGenre[genre.id] || [];
+        const page = moviesByGenre[genre.id] || [];
+        const movies = page.items;
         return (
           <section key={genre.id} style={{ marginBottom: 40 }}>
             <h2>{genre.name}</h2>
@@ -24,7 +25,15 @@ function Home() {
             {movies.length === 0 ? (
               <p>There are not available movies.</p>
             ) : (
-              <Carousel gap={18} peek={24} loop arrows height="auto">
+              <Carousel
+                gap={18}
+                peek={24}
+                loop
+                arrows
+                height="auto"
+                onEnd={() => loadMoreByGenre(genre.id)}
+                endThreshold={1}
+              >
                 {movies.map((movie) => (
                   <Link
                     key={movie.id}

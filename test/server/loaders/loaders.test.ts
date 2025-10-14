@@ -2,21 +2,25 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   DEFAULT_RECOMMENDED_GENRE,
+  DEFAULT_PAGE,
   homeLoader,
   movieDetailLoader,
   wishlistLoader,
   type Deps,
 } from '@/router/loaders';
 import { Movie } from '@/api/domain/model';
+import type { Paginated } from '@/api/domain/model/Pagination';
+import { makePage } from 'test/utils/renderWithRouter';
 
 type StoreState = {
-  genres: any[];
-  moviesByGenre: Record<number, any[]>;
+  genres: any[] | null;
+  moviesByGenre: Record<number, Paginated<Movie>>;
   hasFreshData: (now?: unknown) => boolean;
-  setData: (genres: any[], map: Record<number, any[]>) => void;
+  setData: (genres: any[], map: Record<number, Paginated<Movie>>) => void;
 };
+
 const storeState: StoreState = {
-  genres: [],
+  genres: null,
   moviesByGenre: {},
   hasFreshData: vi.fn(() => false),
   setData: vi.fn((genres, map) => {
@@ -25,12 +29,12 @@ const storeState: StoreState = {
   }),
 };
 
-const defaultSuggestions = [
-  { id: 1, title: 'Suggested A' },
-  { id: 2, title: 'Suggested B' },
-] as Movie[];
+const defaultSuggestions = makePage([
+  { id: 1, title: 'Suggested A' } as Movie,
+  { id: 2, title: 'Suggested B' } as Movie,
+]);
 
-vi.mock('@/app/store/moviesStore', () => ({
+vi.mock('@store/moviesStore', () => ({
   useMoviesStore: {
     getState: () => storeState,
   },
@@ -57,7 +61,7 @@ function unsetWindow() {
 }
 
 beforeEach(() => {
-  storeState.genres = [];
+  storeState.genres = null;
   storeState.moviesByGenre = {};
   (storeState.hasFreshData as any).mockReset().mockReturnValue(false);
   (storeState.setData as any).mockClear();
@@ -69,7 +73,7 @@ afterEach(() => {
 });
 
 describe('homeLoader', () => {
-  it('SSR: gets genres and top 3, builds moviesByGenre, does not call setData', async () => {
+  it('SSR: fetches genres and top 3, builds moviesByGenre paginated and does not call setData', async () => {
     const deps: Deps = {
       listGenres: vi.fn(async () => [
         { id: 1, name: 'G1' },
@@ -77,36 +81,40 @@ describe('homeLoader', () => {
         { id: 3, name: 'G3' },
         { id: 4, name: 'G4' },
       ]),
-      listMoviesByGenre: vi.fn(async (id: number) => [{ id: id * 100, title: `M${id}` } as any]),
-      getMovieDetails: vi.fn() as any,
+      listMoviesByGenre: vi.fn(async (id: number, page: number) =>
+        makePage([{ id: id * 100, title: `M${id}` }], page, 10, 200, 1),
+      ),
+      getMovieDetails: vi.fn(),
     };
 
     const data = await homeLoader(deps);
 
     expect(deps.listGenres).toHaveBeenCalledTimes(1);
     expect(deps.listMoviesByGenre).toHaveBeenCalledTimes(3);
-    expect(deps.listMoviesByGenre).toHaveBeenNthCalledWith(1, 1);
-    expect(deps.listMoviesByGenre).toHaveBeenNthCalledWith(2, 2);
-    expect(deps.listMoviesByGenre).toHaveBeenNthCalledWith(3, 3);
+    expect(deps.listMoviesByGenre).toHaveBeenNthCalledWith(1, 1, DEFAULT_PAGE);
+    expect(deps.listMoviesByGenre).toHaveBeenNthCalledWith(2, 2, DEFAULT_PAGE);
+    expect(deps.listMoviesByGenre).toHaveBeenNthCalledWith(3, 3, DEFAULT_PAGE);
 
-    expect(data.genres?.map((genre: any) => genre.name)).toEqual(['G1', 'G2', 'G3', 'G4']);
+    expect(data.genres?.map((g: any) => g.name)).toEqual(['G1', 'G2', 'G3', 'G4']);
     expect(Object.keys(data.moviesByGenre).map(Number)).toEqual([1, 2, 3]);
-    expect(data.moviesByGenre[2][0]).toEqual({ id: 200, title: 'M2' });
+    expect(data.moviesByGenre[2].items[0]).toEqual({ id: 200, title: 'M2' });
 
     expect(storeState.setData).not.toHaveBeenCalled();
   });
 
-  it('Client with fresh data in store: returns store and does NOT call deps', async () => {
+  it('Client with fresh store data: returns store and does not call deps', async () => {
     setWindowWithLocalStorage(() => null);
 
-    storeState.genres = [{ id: 10, name: 'Fresh' }] as any;
-    storeState.moviesByGenre = { 10: [{ id: 1000, title: 'InStore' } as any] };
+    storeState.genres = [{ id: 10, name: 'Fresh' }];
+    storeState.moviesByGenre = {
+      10: makePage([{ id: 1000, title: 'InStore' }]),
+    };
     (storeState.hasFreshData as any).mockReturnValue(true);
 
     const deps: Deps = {
-      listGenres: vi.fn(async () => [{ id: 1, name: 'X' }] as any),
-      listMoviesByGenre: vi.fn(async () => [{ id: 2, title: 'Y' }] as any),
-      getMovieDetails: vi.fn() as any,
+      listGenres: vi.fn(async () => [{ id: 1, name: 'X' }]),
+      listMoviesByGenre: vi.fn(async () => makePage([{ id: 2, title: 'Y' }])),
+      getMovieDetails: vi.fn(),
     };
 
     const data = await homeLoader(deps);
@@ -121,7 +129,7 @@ describe('homeLoader', () => {
     expect(storeState.setData).not.toHaveBeenCalled();
   });
 
-  it('Client without fresh data: calls deps, builds map and calls setData', async () => {
+  it('Client without fresh data: calls deps, builds paginated map and calls setData', async () => {
     setWindowWithLocalStorage(() => null);
     (storeState.hasFreshData as any).mockReturnValue(false);
 
@@ -131,18 +139,24 @@ describe('homeLoader', () => {
         { id: 2, name: 'G2' },
         { id: 3, name: 'G3' },
       ]),
-      listMoviesByGenre: vi.fn(async (id: number) => [{ id: id * 10, title: `T${id}` } as any]),
-      getMovieDetails: vi.fn() as any,
+      listMoviesByGenre: vi.fn(async (id: number, page: number) =>
+        makePage([{ id: id * 10, title: `T${id}` }], page, 10, 200, 1),
+      ),
+      getMovieDetails: vi.fn(),
     };
 
     const data = await homeLoader(deps);
 
     expect(deps.listGenres).toHaveBeenCalledTimes(1);
     expect(deps.listMoviesByGenre).toHaveBeenCalledTimes(3);
+    expect(deps.listMoviesByGenre).toHaveBeenNthCalledWith(1, 1, DEFAULT_PAGE);
+    expect(deps.listMoviesByGenre).toHaveBeenNthCalledWith(2, 2, DEFAULT_PAGE);
+    expect(deps.listMoviesByGenre).toHaveBeenNthCalledWith(3, 3, DEFAULT_PAGE);
+
     expect(data.moviesByGenre).toEqual({
-      1: [{ id: 10, title: 'T1' }],
-      2: [{ id: 20, title: 'T2' }],
-      3: [{ id: 30, title: 'T3' }],
+      1: makePage([{ id: 10, title: 'T1' }], DEFAULT_PAGE, 10, 200, 1),
+      2: makePage([{ id: 20, title: 'T2' }], DEFAULT_PAGE, 10, 200, 1),
+      3: makePage([{ id: 30, title: 'T3' }], DEFAULT_PAGE, 10, 200, 1),
     });
 
     expect(storeState.setData).toHaveBeenCalledTimes(1);
@@ -153,16 +167,16 @@ describe('homeLoader', () => {
         { id: 3, name: 'G3' },
       ],
       {
-        1: [{ id: 10, title: 'T1' }],
-        2: [{ id: 20, title: 'T2' }],
-        3: [{ id: 30, title: 'T3' }],
+        1: makePage([{ id: 10, title: 'T1' }], DEFAULT_PAGE, 10, 200, 1),
+        2: makePage([{ id: 20, title: 'T2' }], DEFAULT_PAGE, 10, 200, 1),
+        3: makePage([{ id: 30, title: 'T3' }], DEFAULT_PAGE, 10, 200, 1),
       },
     );
   });
 });
 
 describe('movieDetailLoader', () => {
-  it('returns detail and similar movies filtering out the movie itself', async () => {
+  it('returns detail and paginated similar movies filtering out itself', async () => {
     const deps: Deps = {
       getMovieDetails: vi.fn(async (id: string) => ({
         id: Number(id),
@@ -170,86 +184,98 @@ describe('movieDetailLoader', () => {
         genres: [{ id: 7, name: 'Seven' }],
       })) as any,
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      listMoviesByGenre: vi.fn(async (_genreId: number) => [
-        { id: 1, title: 'A' },
-        { id: 2, title: 'B' },
-        { id: 123, title: 'Self' },
-      ]) as any,
-      listGenres: vi.fn() as any,
+       
+      listMoviesByGenre: vi.fn(async (_genreId: number, page: number) =>
+        makePage(
+          [
+            { id: 1, title: 'A' },
+            { id: 2, title: 'B' },
+            { id: 123, title: 'Self' },
+          ],
+          page,
+          5,
+          100,
+          3,
+        ),
+      ),
+      listGenres: vi.fn(),
     };
 
     const data = await movieDetailLoader(deps, '123');
 
     expect(deps.getMovieDetails).toHaveBeenCalledWith('123');
-    expect(deps.listMoviesByGenre).toHaveBeenCalledWith(7);
+    expect(deps.listMoviesByGenre).toHaveBeenCalledWith(7, DEFAULT_PAGE);
     expect(data.movie?.id).toBe(123);
-    expect(data.similarMovies.map((m) => m.id)).toEqual([1, 2]);
+    expect(data.similarMovies.items.map((m) => m.id)).toEqual([1, 2]);
+    expect(data.similarMovies.page).toBe(DEFAULT_PAGE);
+    expect(data.similarMovies.totalPages).toBe(5);
   });
 
-  it('if the movie has no genres, calls listMoviesByGenre with default genre 35 to get suggestions', async () => {
+  it('if movie has no genres, uses default genre and returns paginated similar movies', async () => {
     const deps: Deps = {
       getMovieDetails: vi.fn(async (id: string) => ({
         id: Number(id),
         title: 'No Genres',
         genres: [],
       })) as any,
-
-      listMoviesByGenre: vi.fn(async (genreId: number) => {
+      listMoviesByGenre: vi.fn(async (genreId: number, page: number) => {
         expect(genreId).toBe(DEFAULT_RECOMMENDED_GENRE);
+        expect(page).toBe(DEFAULT_PAGE);
         return defaultSuggestions;
-      }) as any,
-      listGenres: vi.fn() as any,
+      }),
+      listGenres: vi.fn(),
     };
 
     const data = await movieDetailLoader(deps, '42');
 
     expect(deps.getMovieDetails).toHaveBeenCalledWith('42');
     expect(deps.listMoviesByGenre).toHaveBeenCalledTimes(1);
-    expect(deps.listMoviesByGenre).toHaveBeenCalledWith(DEFAULT_RECOMMENDED_GENRE);
+    expect(deps.listMoviesByGenre).toHaveBeenCalledWith(DEFAULT_RECOMMENDED_GENRE, DEFAULT_PAGE);
     expect(data.movie?.id).toBe(42);
     expect(data.similarMovies).toEqual(defaultSuggestions);
   });
 
-  it('if getMovieDetails throws error, returns movie null and calls listMoviesByGenre with default genre 35 to get suggestions', async () => {
+  it('if getMovieDetails throws, returns movie null and uses default genre', async () => {
     const deps: Deps = {
       getMovieDetails: vi.fn(async () => {
         throw new Error('Not found');
-      }) as any,
-      listMoviesByGenre: vi.fn(async (genreId: number) => {
+      }),
+      listMoviesByGenre: vi.fn(async (genreId: number, page: number) => {
         expect(genreId).toBe(DEFAULT_RECOMMENDED_GENRE);
+        expect(page).toBe(DEFAULT_PAGE);
         return defaultSuggestions;
-      }) as any,
-      listGenres: vi.fn() as any,
+      }),
+      listGenres: vi.fn(),
     };
 
     const data = await movieDetailLoader(deps, '999999');
 
     expect(deps.getMovieDetails).toHaveBeenCalledWith('999999');
     expect(deps.listMoviesByGenre).toHaveBeenCalledTimes(1);
-    expect(deps.listMoviesByGenre).toHaveBeenCalledWith(DEFAULT_RECOMMENDED_GENRE);
+    expect(deps.listMoviesByGenre).toHaveBeenCalledWith(DEFAULT_RECOMMENDED_GENRE, DEFAULT_PAGE);
     expect(data).toEqual({ movie: null, similarMovies: defaultSuggestions });
   });
 
-  it('if movie.genres is undefined, calls listMoviesByGenre with default genre 35 to get suggestions', async () => {
+  it('if movie.genres is undefined, uses default genre and returns paginated similar movies', async () => {
     const deps: Deps = {
       getMovieDetails: vi.fn(async (id: string) => ({
         id: Number(id),
         title: 'Undefined Genres',
-        genres: undefined as any,
+        genres: undefined,
       })) as any,
-      listMoviesByGenre: vi.fn(async (genreId: number) => {
+      listMoviesByGenre: vi.fn(async (genreId: number, page: number) => {
         expect(genreId).toBe(DEFAULT_RECOMMENDED_GENRE);
+        expect(page).toBe(DEFAULT_PAGE);
         return defaultSuggestions;
-      }) as any,
-      listGenres: vi.fn() as any,
+      }),
+      listGenres: vi.fn(),
     };
 
     const data = await movieDetailLoader(deps, '7');
 
     expect(deps.getMovieDetails).toHaveBeenCalledWith('7');
     expect(deps.listMoviesByGenre).toHaveBeenCalledTimes(1);
-    expect(deps.listMoviesByGenre).toHaveBeenCalledWith(DEFAULT_RECOMMENDED_GENRE);
+    expect(deps.listMoviesByGenre).toHaveBeenCalledWith(DEFAULT_RECOMMENDED_GENRE, DEFAULT_PAGE);
     expect(data.movie?.id).toBe(7);
     expect(data.similarMovies).toEqual(defaultSuggestions);
   });

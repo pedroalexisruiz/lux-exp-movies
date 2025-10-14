@@ -30,7 +30,17 @@ export function makeMovieRouter() {
       if (Number.isNaN(id))
         throw new DomainException('InvalidArgument', 'Genre ID must be a number');
 
-      const data = await getMoviesByGenre(id);
+      const pageRaw = req.query.page;
+      const page = pageRaw == null ? 1 : Number(pageRaw);
+      if (!Number.isFinite(page) || page < 1) {
+        throw new DomainException(
+          'InvalidArgument',
+          'Query param "page" must be a positive number',
+        );
+      }
+
+      const data = await getMoviesByGenre(id, page);
+
       res.json({ ok: true, data });
     }),
   );
