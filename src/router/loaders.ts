@@ -7,6 +7,8 @@ export type Deps = {
   getMovieDetails: (id: string) => Promise<Movie>;
 };
 
+export const DEFAULT_RECOMMENDED_GENRE = 35;
+
 export const homeLoader = async (deps: Deps) => {
   if (typeof window !== 'undefined' && useMoviesStore.getState().hasFreshData()) {
     const { genres, moviesByGenre } = useMoviesStore.getState();
@@ -32,10 +34,20 @@ export const homeLoader = async (deps: Deps) => {
 };
 
 export const movieDetailLoader = async (deps: Deps, id: string) => {
-  const movie = await deps.getMovieDetails(id);
-  const similarMovies = await deps.listMoviesByGenre(movie.genres[0].id);
-  const filteredSimilarMovies = similarMovies.filter((m) => m.id !== movie.id);
-  return { movie, similarMovies: filteredSimilarMovies };
+  let similarMovies: Movie[] = [];
+  try {
+    const movie = await deps.getMovieDetails(id);
+    const firstGenreId = movie?.genres?.[0]?.id ?? DEFAULT_RECOMMENDED_GENRE;
+
+    const recs = await deps.listMoviesByGenre(firstGenreId);
+    similarMovies = movie ? recs.filter((m) => m.id !== movie.id) : recs;
+
+    return { movie, similarMovies };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
+    similarMovies = await deps.listMoviesByGenre(DEFAULT_RECOMMENDED_GENRE);
+    return { movie: null, similarMovies };
+  }
 };
 
 export const wishlistLoader = async () => {

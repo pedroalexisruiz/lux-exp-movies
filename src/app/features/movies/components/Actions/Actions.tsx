@@ -1,3 +1,4 @@
+import { Button } from '@/app/shared/ui/Carousel/Button/Button';
 import './Actions.scss';
 
 interface ActionsProps {
@@ -20,17 +21,14 @@ export function Actions({
   return (
     <div className="md-actions">
       {primaryLabel && (
-        <button className="md-actions__btn md-actions__btn--ghost" onClick={onPrimary}>
+        <Button variant="ghost" onClick={onPrimary}>
           {primaryLabel}
-        </button>
+        </Button>
       )}
-      <button
-        className={`md-actions__btn md-actions__btn--primary ${secondaryActive ? 'md-actions__btn--primary__active' : ''}`}
-        onClick={onSecondary}
-      >
+      <Button active={secondaryActive} onClick={onSecondary}>
         {secondaryIcon}
         {secondaryLabel}
-      </button>
+      </Button>
     </div>
   );
 }

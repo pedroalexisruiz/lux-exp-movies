@@ -5,10 +5,12 @@ import { useMoviesStore } from '../app/store/moviesStore';
 import { Deps, homeLoader, movieDetailLoader, wishlistLoader } from './loaders';
 import { Wishlist } from '../app/pages/WishList/WishList';
 import { AppLayout } from '../app/layout/AppLayout/AppLayout';
+import ErrorBoundary from '@/app/pages/ErrorBoundary/ErrorBoundary';
 
 export const makeRoutes = (deps: Deps): RouteObject[] => [
   {
     element: <AppLayout />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         index: true,

@@ -13,6 +13,10 @@
     font-family: var(--font-heading);
   }
 
+  &__not-found-section {
+    padding: 2rem;
+  }
+
   &__body {
     max-width: 1200px;
     margin: 0 auto;

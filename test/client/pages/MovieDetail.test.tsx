@@ -25,7 +25,7 @@ const TEXT = {
   votes: '(3.2M)',
   summary: 'Summary',
   overview: 'A long synopsis…',
-  noOverview: 'There is not available synopsis.',
+  noOverview: 'No synopsis available.',
   genre1: 'Action',
   genre2: 'Drama',
   genreAlt: 'Sci-Fi',
