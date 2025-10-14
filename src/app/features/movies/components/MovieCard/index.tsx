@@ -1,5 +1,5 @@
 import './MovieCard.scss';
-import placeholderPoster from '../../../../../assets/movie-placeholder.jpeg';
+import placeholderPoster from '@assets/movie-placeholder.jpeg';
 import { FaStar } from 'react-icons/fa';
 
 export interface MovieCardProps {

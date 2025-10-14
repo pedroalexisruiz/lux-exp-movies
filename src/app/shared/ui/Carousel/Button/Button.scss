@@ -1,0 +1,48 @@
+.ui-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 10px 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+
+  &--primary {
+    border-color: var(--primary), #ea2a33;
+    font-weight: 700;
+    &:hover {
+      background: var(--primary-600), #5e181a;
+      transform: translateY(-1px);
+    }
+
+    &__active {
+      background: var(--primary), #ea2a33;
+    }
+  }
+
+  &--secondary {
+    background-color: #5e181a;
+    color: #ffffff;
+
+    &:hover {
+      background-color: #ea2a33;
+      transform: translateY(-1px);
+    }
+  }
+
+  &--ghost {
+    background: #1d1f25;
+    border-color: rgba(255, 255, 255, 0.08);
+    justify-content: center;
+    &:hover {
+      background: #23262d;
+      transform: translateY(-1px);
+    }
+  }
+}

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { parseAverage, parseYearString } from '@/utils/stringParser';
 
 export const useMovieDetail = () => {
-  const data = useLoaderData<{ movie: Movie; similarMovies: Movie[] }>();
+  const data = useLoaderData<{ movie: Movie | null; similarMovies: Movie[] }>();
   const { movie, similarMovies } = data;
 
   const [hydrated, setHydrated] = useState(false);
@@ -15,7 +15,9 @@ export const useMovieDetail = () => {
   const wishNow = useWishlist((s) => (movie ? s.has(movie.id) : false));
   const isInWishlist = hydrated ? wishNow : false;
 
-  if (!movie) return { movie: null, similarMovies: [] };
+  useEffect(() => setHydrated(true), []);
+
+  if (!movie) return { movie, similarMovies };
 
   const toggleItemOnWishlist = () => {
     if (isInWishlist) {
@@ -32,8 +34,6 @@ export const useMovieDetail = () => {
 
   const languagesList = movie.spokenLanguages.map((l) => l.englishName);
   const countriesList = movie.productionCountries.map((c) => c.name);
-
-  useEffect(() => setHydrated(true), []);
 
   return {
     movie,

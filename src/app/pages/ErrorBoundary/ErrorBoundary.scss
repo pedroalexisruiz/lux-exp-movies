@@ -1,0 +1,59 @@
+#root {
+  height: 100vh;
+}
+
+.erbo {
+  &-container {
+    width: 80%;
+    height: 80%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  &_title {
+    margin-bottom: 8px;
+    @media (min-width: 640px) {
+      font-size: 14px;
+    }
+  }
+
+  &_description {
+    opacity: 0.8;
+    margin-bottom: 16;
+    color: var(--text);
+  }
+
+  &_image {
+    max-width: 85%;
+    height: auto;
+    border-radius: 4px;
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 8px 16px -6px #461416;
+
+    @media (min-width: 640px) {
+      max-width: 450px;
+    }
+  }
+
+  &_help-text {
+    margin-top: 16px;
+    font-size: 12px;
+    opacity: 0.6;
+    color: var(--text);
+  }
+
+  &_actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &_button {
+    width: 125px;
+    justify-content: center;
+  }
+}
