@@ -1,17 +1,19 @@
 import 'dotenv/config';
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import express from 'express';
-import compression from 'compression';
-import sirv from 'sirv';
-import { createServer as createViteServer, ViteDevServer } from 'vite';
+import { ViteDevServer } from 'vite';
 import { makeMovieRouter } from './src/api/infrastructure/controllers';
 import Beasties from 'beasties';
 
-const isProduction = process.env.NODE_ENV === 'production';
-const port = process.env.PORT || 5173;
-const base = process.env.BASE || '/';
+type CreateAppOpts = {
+  vite?: ViteDevServer | undefined;
+  base?: string;
+  production?: boolean;
+};
 
-const templateHtml = isProduction ? await fs.readFile('./dist/client/index.html', 'utf-8') : '';
+const isProduction = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
+const base = process.env.BASE || '/';
 
 const critter = isProduction
   ? new Beasties({
@@ -28,46 +30,35 @@ const critter = isProduction
 
 const htmlCache = new Map<string, string>();
 
-function createApp() {
-  const app = express();
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-  app.use('/api/movies', makeMovieRouter());
-  return app;
-}
-
-async function setupAssets(app: express.Express) {
-  if (!isProduction) {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'custom',
-      base,
-    });
-    app.use(vite.middlewares);
-    return vite;
-  } else {
-    app.use(compression());
-    app.use(base, sirv('./dist/client', { extensions: [] }));
-    return undefined;
-  }
-}
-
 function normalizeUrl(originalUrl: string) {
   let url = originalUrl.replace(base, '');
   if (!url.startsWith('/')) url = '/' + url;
   return url;
 }
 
+function pathToFileUrl(p: string) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { pathToFileURL } = require('node:url');
+  return pathToFileURL(p);
+}
+
 async function getTemplateAndRender(url: string, vite?: ViteDevServer) {
-  if (!isProduction) {
+  if (!isProduction && vite) {
     let template = await fs.readFile('./index.html', 'utf-8');
     template = await vite!.transformIndexHtml(url, template);
     const render = (await vite!.ssrLoadModule('/src/entry-server.tsx')).render;
     return { template, render };
   } else {
-    const template = templateHtml;
-    const mod = await import('./dist/server/entry-server.js');
-    const render = mod.render;
+    const template = await fs.readFile(
+      path.resolve(process.cwd(), 'dist/client/index.html'),
+      'utf-8',
+    );
+    const mod = await import(pathToFileUrl(path.resolve('dist/server/entry-server.js')).href);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const render = (mod as any).render as (
+      url: string,
+      ctx: Record<string, unknown>,
+    ) => Promise<{ html: string; head?: string; initialState?: unknown }>;
     return { template, render };
   }
 }
@@ -91,27 +82,30 @@ async function inlineCriticalCss(url: string, html: string) {
   return processed;
 }
 
-const app = createApp();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function createApp({ vite, base: _base = base }: CreateAppOpts = {}) {
+  const app = express();
 
-const vite = await setupAssets(app);
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use('/api/movies', makeMovieRouter());
 
-app.use(/.*/, async (req, res) => {
-  try {
-    const url = normalizeUrl(req.originalUrl);
-    const { template, render } = await getTemplateAndRender(url, vite);
-    const ssrContext = { req, res };
-    const { html, head = '', initialState } = await render(url, ssrContext);
-    const merged = withState(template, head, html, initialState);
-    const finalHtml = await inlineCriticalCss(url, merged);
-    res.status(200).set({ 'Content-Type': 'text/html' }).send(finalHtml);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (e: any) {
-    vite?.ssrFixStacktrace?.(e);
-    console.log(e.stack);
-    res.status(500).end(e.stack);
-  }
-});
+  app.use(/.*/, async (req, res) => {
+    try {
+      const url = normalizeUrl(req.originalUrl);
+      const { template, render } = await getTemplateAndRender(url, vite);
+      const ssrContext = { req, res };
+      const { html, head = '', initialState } = await render(url, ssrContext);
+      const merged = withState(template, head, html, initialState);
+      const finalHtml = await inlineCriticalCss(url, merged);
+      res.status(200).set({ 'Content-Type': 'text/html' }).send(finalHtml);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      vite?.ssrFixStacktrace?.(e);
+      console.log(e.stack);
+      res.status(500).end(e.stack);
+    }
+  });
 
-app.listen(port, () => {
-  console.log(`Server started at port ${port}`);
-});
+  return app;
+}
