@@ -1,3 +1,4 @@
+import { useSwipeDrag } from '../../hooks/useSwipDrag';
 import './Carousel.scss';
 import { useCarousel, useCarouselParams } from './useCarousel';
 
@@ -52,12 +53,23 @@ export const Carousel = ({
 
   const slideWidthPx = show > 0 ? (viewportW - (show - 1) * gap) / show : 0;
   const stepPx = slideWidthPx + gap;
-  const trackWidthPx = count > 0 ? count * slideWidthPx + (count - 1) * gap : 0;
-  const translatePx = -index * stepPx;
 
+  const { isDragging, dragX, dragBind } = useSwipeDrag({
+    stepPx,
+    onNext: handleNext,
+    onPrev: handlePrevious,
+    axis: 'x',
+    lockThresholdPx: 8,
+    distanceThresholdRatio: 0.25,
+    flickVelocityPxPerMs: 0.05,
+    enabled: count > show,
+    rtl: false,
+  });
+
+  const translatePx = -index * stepPx + dragX;
   return (
     <div
-      className="carousel"
+      className={`carousel ${isDragging ? 'carousel--dragging' : ''}`}
       style={
         {
           ['--gap']: `${gap}px`,
@@ -87,14 +99,11 @@ export const Carousel = ({
         </>
       )}
 
-      <div className="carousel__viewport" ref={viewportRef}>
+      <div className="carousel__viewport" ref={viewportRef} {...dragBind}>
         <div
           ref={trackRef}
           className="carousel__track"
-          style={{
-            width: `${trackWidthPx}px`,
-            transform: `translateX(${translatePx}px)`,
-          }}
+          style={{ transform: `translateX(${translatePx}px)` }}
         >
           {slides.map((child, i) => (
             <div
