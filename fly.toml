@@ -11,9 +11,9 @@ primary_region = 'cdg'
 [http_service]
   internal_port = 5173
   force_https = true
-  auto_stop_machines = 'stop'
+  auto_stop_machines = false
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ['app']
   concurrency = { type = "requests", soft_limit = 20, hard_limit = 25 }
 
