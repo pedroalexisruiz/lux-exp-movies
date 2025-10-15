@@ -8,7 +8,8 @@ import { makeMovieRouter } from './src/api/infrastructure/controllers';
 import Beasties from 'beasties';
 
 const isProduction = process.env.NODE_ENV === 'production';
-const port = process.env.PORT || 5173;
+const port = Number(process.env.PORT) || 5173;
+const host = process.env.HOST ?? '127.0.0.1';
 const base = process.env.BASE || '/';
 
 const templateHtml = isProduction ? await fs.readFile('./dist/client/index.html', 'utf-8') : '';
@@ -112,6 +113,6 @@ app.use(/.*/, async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+app.listen(port, host, () => {
   console.log(`Server started at port ${port}`);
 });
