@@ -1,5 +1,22 @@
 # Lux Exp Movies SSR App – Setup and Execution Guide
 
+**MoviesApp** is a server-side rendered movie app built with React, Vite, TypeScript, and Express. It dynamically renders movie details, fetches related titles by genre, and uses efficient caching for fast, consistent performance across environments.
+
+You can see the app [here](https://lux-exp-movies.fly.dev/).
+
+## Screenshots
+### Home
+![Home](./public/home.png)
+
+### Movie Details
+![Movie Details](./public/movie-detail.png)
+
+### Wishlist
+![wishlist](./public/wishlist.png)
+
+
+# Local deployment guide
+
 This guide explains **step-by-step** how to run the SSR project from scratch, both in **local (Node/Vite)** mode and using **Docker Compose**, including the optional **Redis** setup.
 
 > Works on macOS, Linux, and Windows (with Docker Desktop).  
