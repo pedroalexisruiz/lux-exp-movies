@@ -20,7 +20,53 @@ You can see the app [here](https://lux-exp-movies.fly.dev/).
 This guide explains **step-by-step** how to run the SSR project from scratch, both in **local (Node/Vite)** mode and using **Docker Compose**, including the optional **Redis** setup.
 
 > Works on macOS, Linux, and Windows (with Docker Desktop).  
-> Minimum requirements: **Node.js 18+ (recommended 22)**, **npm 9+**, **Docker 24+**, and **Docker Compose v2** (`docker compose ...`).
+> Minimum requirements: **Node.js 22+**, **npm 10+**, **Docker 24+**, and **Docker Compose v2** (`docker compose ...`).
+
+---
+
+## 🧰 Node.js Version Management
+
+To deploy in dev mode, this project uses a **specific Node.js version** to ensure consistent behavior across environments (macOS, Windows, Linux, CI) in dev mode. If you're using Docker to run it, you can skip this step.
+
+### 📦 Required Node.js version
+```
+Node.js v22.20.0
+```
+
+> 📁 The version is defined in:
+> - `.nvmrc` – for [nvm](https://github.com/nvm-sh/nvm) (macOS/Linux) and [nvm-windows](https://github.com/coreybutler/nvm-windows)
+> - `.node-version` – for [asdf](https://asdf-vm.com/), [nodenv](https://github.com/nodenv/nodenv), or IDE integrations
+> - `"engines"` field in `package.json` – used by npm/yarn/pnpm to show warnings if the Node version doesn’t match.
+
+---
+
+## ⚙️ Setting up your Node version
+
+### macOS / Linux
+```bash
+# If you use nvm
+nvm install        # installs the version from .nvmrc (if not installed yet)
+nvm use            # switches to that version
+```
+
+### Windows
+```powershell
+# If you use nvm-windows
+nvm install 22.20.0
+nvm use 22.20.0
+```
+
+### asdf (any OS)
+```bash
+asdf install
+```
+---
+
+## ✅ Why this matters
+Ensuring everyone uses the same Node version avoids issues like:
+- Different ES module behaviors between Node versions
+- Incompatible dependency trees
+- Build or SSR inconsistencies between local and production
 
 ---
 
@@ -197,8 +243,6 @@ The `Dockerfile` uses a **multi-stage build**:
   ```bash
   node --import=tsx --import=tsconfig-paths/register server.ts
   ```
-
-> The runtime uses `tsx` as a loader, so you don’t need `ts-node`.
 
 ---
 
